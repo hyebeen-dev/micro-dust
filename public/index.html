@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>오늘의 공기 — 우리 지역 미세먼지, 한 번의 클릭으로</title>
+<meta name="description" content="17개 시·도 칩을 클릭하면 그 지역의 미세먼지 상황을 즉시 보여주는 웹 서비스" />
+<link rel="stylesheet" href="styles.css" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" defer></script>
+<script src="app.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand">
+        <h1>오늘의 공기</h1>
+        <p class="tagline">우리 지역 공기, 한 번의 클릭으로</p>
+      </div>
+      <button id="refresh-btn" class="refresh-btn" type="button" hidden>
+        <span aria-hidden="true">↻</span> 새로고침
+      </button>
+    </div>
+  </header>
+
+  <nav class="chip-area" aria-label="시·도 선택">
+    <div id="chip-list" class="chip-list" role="tablist" aria-label="시·도 목록"></div>
+  </nav>
+
+  <main id="result-area" class="result-area" aria-live="polite">
+    <div id="intro" class="intro">
+      <p class="intro-icon" aria-hidden="true">🌤️</p>
+      <p class="intro-text">지역을 선택해 주세요</p>
+    </div>
+
+    <div id="skeleton" class="card skeleton-card" hidden aria-hidden="true">
+      <div class="skeleton-line skeleton-title"></div>
+      <div class="skeleton-line skeleton-badge"></div>
+      <div class="skeleton-line skeleton-value"></div>
+      <div class="skeleton-line skeleton-value"></div>
+      <div class="skeleton-line skeleton-text"></div>
+    </div>
+
+    <div id="error-box" class="card error-card" hidden>
+      <p id="error-message" class="error-message"></p>
+      <button id="retry-btn" class="retry-btn" type="button">다시 시도</button>
+    </div>
+
+    <div id="card" class="card result-card" hidden>
+      <div class="card-head">
+        <h2 id="card-region"></h2>
+        <span id="stale-badge" class="stale-badge" hidden>지연</span>
+      </div>
+      <div id="grade-badge" class="grade-badge">
+        <span id="grade-icon" class="grade-icon" aria-hidden="true"></span>
+        <span id="grade-text" class="grade-text"></span>
+      </div>
+      <p id="card-time" class="card-time"></p>
+
+      <div class="metrics">
+        <div class="metric metric-main">
+          <span class="metric-label">초미세먼지 (PM2.5)</span>
+          <span id="pm25-value" class="metric-value"></span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">미세먼지 (PM10)</span>
+          <span id="pm10-value" class="metric-value"></span>
+        </div>
+      </div>
+
+      <div class="advice">
+        <p id="advice-main" class="advice-main"></p>
+        <p id="advice-detail" class="advice-detail"></p>
+      </div>
+
+      <div class="cai-block">
+        <div class="cai-head">
+          <span>통합대기환경지수 (CAI)</span>
+          <span id="cai-value"></span>
+        </div>
+        <div class="cai-gauge">
+          <div id="cai-gauge-fill" class="cai-gauge-fill"></div>
+        </div>
+      </div>
+
+      <div id="deviation" class="deviation"></div>
+      <p id="station-count" class="station-count"></p>
+
+      <section class="chart-section">
+        <h3>24시간 추이</h3>
+        <p id="chart-station-note" class="chart-station-note"></p>
+        <div class="chart-wrapper">
+          <canvas id="trend-chart" height="220" role="img" aria-label="24시간 미세먼지·초미세먼지 추이 그래프"></canvas>
+        </div>
+        <details class="chart-table-details">
+          <summary>시간별 상세 표 보기</summary>
+          <div class="chart-table-scroll">
+            <table id="chart-table" class="chart-table">
+              <thead>
+                <tr><th scope="col">시각</th><th scope="col">PM2.5</th><th scope="col">PM10</th></tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </details>
+      </section>
+
+      <details class="other-items">
+        <summary>기타 항목 보기 (오존 · 이산화질소 · 일산화탄소 · 아황산가스)</summary>
+        <ul id="other-items-list" class="other-items-list"></ul>
+      </details>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>출처: 한국환경공단 에어코리아 · 데이터는 약 1시간 주기로 갱신됩니다</p>
+  </footer>
+</body>
+</html>
